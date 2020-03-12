@@ -159,14 +159,25 @@ $("#shows-list").on("click", ".btn-episode", async function getEpisodes(id) {
 
   function populateEpisodes(episodes) {
     const $episodeList = $("#episode-list");
+    console.log($episodeList);
     $episodeList.empty();
 
     // console.log(shows.data.show.image);
 
     for (let episode of episodes) {
       let $item = $(
-        `<div>
-            <div id="list-contaner"> Season${episode.season}
+        `
+            <div>
+            <div id="list-contaner"> Id ${episode.id}
+
+            </div>
+            <div id="list-contaner"> Episode ${ episode.name}
+
+            </div>
+            <div id="list-contaner"> Season ${episode.season}
+
+            </div>
+            <div id="list-contaner"> Part ${episode.number}
 
             </div>
         </div>
