@@ -80,16 +80,20 @@ function populateShows(shows) {
 
   for (let show of shows) {
     let $item = $(
-      `<img class="card-img-top" src="${show.image}">
-      <div class="col-md-6 col-lg-3 Show" data-show-id="${show.id}">
+      `<div class="col-md-6 col-lg-3 Show" data-show-id="${show.id}">
+        <img class="card-img-top" src="${show.image}">
          <div class="card" data-show-id="${show.id}">
            <div class="card-body">
              <h5 class="card-title">${show.name}</h5>
              <p class="card-text">${show.summary}</p>
+             <button class="btn-episode" value="${show.id}">Episodes</button>
+             <div id="episode-list"></div>
            </div>
          </div>
        </div>
-      `);
+      `
+    );
+    
 
     $showsList.append($item);
   }
@@ -119,10 +123,67 @@ $("#search-form").on("submit", async function handleSearch (evt) {
  *      { id, name, season, number }
  */
 
-async function getEpisodes(id) {
+$("#shows-list").on("click", ".btn-episode", async function getEpisodes(id) {
+  event.preventDefault();
+  
+  
+  let episodeId = event.target.value;
+  let episodeResponse = await axios.get(
+    `http://api.tvmaze.com/shows/${episodeId}/episodes`
+  )
+
+  let array = [];
+
+  for (let i = 0; i < episodeResponse.data.length; i++) {
+
+    let id = episodeResponse.data[i].id;
+    let name = episodeResponse.data[i].name;
+    let season = episodeResponse.data[i].season;
+    let number = episodeResponse.data[i].number;
+    // if (!image) {
+    //   image = "https://tinyurl.com/tv-missing";
+    // } else {
+    //   image = episodeResponse.data[i];
+    // }
+    array.push({
+      id,
+      name,
+      season,
+      number
+    });
+
+
+    populateEpisodes(array);
+  }
+
+
+  function populateEpisodes(episodes) {
+    const $episodeList = $("#episode-list");
+    $episodeList.empty();
+
+    // console.log(shows.data.show.image);
+
+    for (let episode of episodes) {
+      let $item = $(
+        `<div>
+            <div id="list-contaner"> Season${episode.season}
+
+            </div>
+        </div>
+        
+      `
+      );
+
+
+      $episodeList.append($item);
+    }
+  }
+
+  return array;
+  // console.log(episodeResponse)
   // TODO: get episodes from tvmaze
   //       you can get this by making GET request to
   //       http://api.tvmaze.com/shows/SHOW-ID-HERE/episodes
 
   // TODO: return array-of-episode-info, as described in docstring above
-}
+});
